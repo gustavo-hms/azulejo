@@ -134,23 +134,23 @@ suite =
           in
           describe "Tree.goToRoot"
             [ test "should go up one level properly" <|
-                \_ -> zip tree |> goToRightChild |> thenTest
+                \_ -> zipper |> goToRightChild |> thenTest
             , test "should go up two levels properly" <|
                 \_ ->
-                    zip tree
+                    zipper
                         |> goToRightChild
                         |> andThen goToLeftChild
                         |> thenTest
             , test "should go up three levels properly" <|
                 \_ ->
-                    zip tree
+                    zipper
                         |> goToRightChild
                         |> andThen goToLeftChild
                         |> andThen goToLeftChild
                         |> thenTest
             , test "should stay on the root" <|
                 \_ ->
-                    zip tree
+                    zipper
                         |> goToRoot
                         |> unzip
                         |> firstElement
