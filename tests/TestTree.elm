@@ -29,6 +29,10 @@ tree =
            )
 
 
+zipper =
+    zip tree
+
+
 thenEnsure : (a -> Expectation) -> String -> Maybe a -> Expectation
 thenEnsure expecting onFail m =
     case m of
@@ -50,18 +54,18 @@ suite =
         [ describe "Tree.goToLeftChild"
             [ test "applied once should go to the node 11" <|
                 \_ ->
-                    zip tree
+                    zipper
                         |> goToLeftChild
                         |> thenCompare 11 "Couldn't reach child"
             , test "applied twice should go to the node 111" <|
                 \_ ->
-                    zip tree
+                    zipper
                         |> goToLeftChild
                         |> andThen goToLeftChild
                         |> thenCompare 111 "Couldn't reach child"
             , test "applied three times should find Nothing" <|
                 \_ ->
-                    zip tree
+                    zipper
                         |> goToLeftChild
                         |> andThen goToLeftChild
                         |> andThen goToLeftChild
@@ -70,18 +74,18 @@ suite =
         , describe "Tree.goToRightChild"
             [ test "applied once should go to the node 12" <|
                 \_ ->
-                    zip tree
+                    zipper
                         |> goToRightChild
                         |> thenCompare 12 "Couldn't reach child"
             , test "applied twice should go to the node 122" <|
                 \_ ->
-                    zip tree
+                    zipper
                         |> goToRightChild
                         |> andThen goToRightChild
                         |> thenCompare 122 "Couldn't reach child"
             , test "applied three times should find Nothing" <|
                 \_ ->
-                    zip tree
+                    zipper
                         |> goToRightChild
                         |> andThen goToRightChild
                         |> andThen goToRightChild
@@ -89,7 +93,7 @@ suite =
             ]
         , let
             down =
-                zip tree
+                zipper
                     |> goToRightChild
                     |> andThen goToLeftChild
                     |> andThen goToRightChild
@@ -151,6 +155,20 @@ suite =
                         |> unzip
                         |> firstElement
                         |> Expect.equal 1
+            ]
+        , describe "Tree.goTo"
+            [ test "should find the node 1211" <|
+                \_ ->
+                    goTo ((==) 1211) zipper
+                        |> thenCompare 1211 "Couldn't find node 1211"
+            , test "should find the node 112" <|
+                \_ ->
+                    goTo (\n -> rem n 2 == 0) zipper
+                        |> thenCompare 112 "Couldn't find node 112"
+            , test "should find Nothing" <|
+                \_ ->
+                    goTo ((==) 17) zipper
+                        |> Expect.equal Nothing
             ]
 
         -- [ fuzzGraph "Fuzz navigation" (zip <| Leaf 1) <|
