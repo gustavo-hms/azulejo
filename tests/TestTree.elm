@@ -1,4 +1,4 @@
-module Example exposing (..)
+module TestTree exposing (..)
 
 --import Fuzz exposing (Fuzzer, int, list, string)
 --import Graph exposing (empty, insertEdge, insertNodeData)
@@ -29,14 +29,14 @@ tree =
            )
 
 
-thenEnsure : String -> (a -> Expectation) -> Maybe a -> Expectation
-thenEnsure onFail expecting x =
-    case x of
+thenCompare : a -> String -> Maybe (Zipper a) -> Expectation
+thenCompare value onFail m =
+    case m of
         Nothing ->
             Expect.fail onFail
 
         Just y ->
-            expecting y
+            Tree.unzip y |> firstElement |> Expect.equal value
 
 
 suite : Test
@@ -47,19 +47,13 @@ suite =
                 \_ ->
                     zip tree
                         |> goToLeftChild
-                        |> thenEnsure "Couldn't reach child"
-                            (\child ->
-                                Tree.unzip child |> firstElement |> Expect.equal 11
-                            )
+                        |> thenCompare 11 "Couldn't reach child"
             , test "applied twice should go to the node 111" <|
                 \_ ->
                     zip tree
                         |> goToLeftChild
                         |> andThen goToLeftChild
-                        |> thenEnsure "Couldn't reach child"
-                            (\child ->
-                                Tree.unzip child |> firstElement |> Expect.equal 111
-                            )
+                        |> thenCompare 111 "Couldn't reach child"
             , test "applied three times should find Nothing" <|
                 \_ ->
                     zip tree
@@ -73,19 +67,13 @@ suite =
                 \_ ->
                     zip tree
                         |> goToRightChild
-                        |> thenEnsure "Couldn't reach child"
-                            (\child ->
-                                Tree.unzip child |> firstElement |> Expect.equal 12
-                            )
+                        |> thenCompare 12 "Couldn't reach child"
             , test "applied twice should go to the node 122" <|
                 \_ ->
                     zip tree
                         |> goToRightChild
                         |> andThen goToRightChild
-                        |> thenEnsure "Couldn't reach child"
-                            (\child ->
-                                Tree.unzip child |> firstElement |> Expect.equal 122
-                            )
+                        |> thenCompare 122 "Couldn't reach child"
             , test "applied three times should find Nothing" <|
                 \_ ->
                     zip tree
@@ -106,8 +94,7 @@ suite =
                 \_ ->
                     down
                         |> andThen goUp
-                        |> thenEnsure "Couldn't reach upper level"
-                            (\upper -> Tree.unzip upper |> firstElement |> Expect.equal 121)
+                        |> thenCompare 121 "Couldn't reach upper level"
             ]
 
         -- [ fuzzGraph "Fuzz navigation" (zip <| Leaf 1) <|
