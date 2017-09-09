@@ -2,7 +2,7 @@ module Tree
     exposing
         ( Tree(..)
         , Zipper
-        , firstElement
+        , element
         , goTo
         , goToLeftChild
         , goToRightChild
@@ -35,8 +35,8 @@ type alias Zipper a =
     ( Tree a, Breadcrumbs a )
 
 
-firstElement : Tree a -> a
-firstElement tree =
+element : Zipper a -> a
+element ( tree, _ ) =
     case tree of
         Leaf a ->
             a
@@ -117,7 +117,7 @@ goTo predicate zipper =
                     takeThis
 
         find predicate (( tree, _ ) as zipper) =
-            if predicate <| firstElement tree then
+            if predicate <| element zipper then
                 Just zipper
             else
                 goToLeftChild zipper

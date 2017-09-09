@@ -45,7 +45,7 @@ thenEnsure expecting onFail m =
 
 thenCompare : a -> String -> Maybe (Zipper a) -> Expectation
 thenCompare value onFail =
-    thenEnsure (subtree >> firstElement >> Expect.equal value) onFail
+    thenEnsure (Expect.equal value << element) onFail
 
 
 suite : Test
@@ -129,7 +129,7 @@ suite =
         , let
             thenTest =
                 thenEnsure
-                    (unzip >> firstElement >> Expect.equal 1)
+                    (goToRoot >> element >> Expect.equal 1)
                     "Couldn't reach root"
           in
           describe "Tree.goToRoot"
@@ -148,11 +148,11 @@ suite =
                         |> andThen goToLeftChild
                         |> andThen goToLeftChild
                         |> thenTest
-            , test "should stay on the root" <|
+            , test "should stay at root" <|
                 \_ ->
                     zipper
-                        |> unzip
-                        |> firstElement
+                        |> goToRoot
+                        |> element
                         |> Expect.equal 1
             ]
         , describe "Tree.goTo"
