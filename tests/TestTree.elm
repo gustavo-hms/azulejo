@@ -129,7 +129,7 @@ suite =
         , let
             thenTest =
                 thenEnsure
-                    (goToRoot >> subtree >> firstElement >> Expect.equal 1)
+                    (unzip >> firstElement >> Expect.equal 1)
                     "Couldn't reach root"
           in
           describe "Tree.goToRoot"
@@ -151,8 +151,7 @@ suite =
             , test "should stay on the root" <|
                 \_ ->
                     zipper
-                        |> goToRoot
-                        |> subtree
+                        |> unzip
                         |> firstElement
                         |> Expect.equal 1
             ]

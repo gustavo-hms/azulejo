@@ -9,6 +9,7 @@ module Tree
         , goToRoot
         , goUp
         , subtree
+        , unzip
         , zip
         )
 
@@ -47,6 +48,11 @@ firstElement tree =
 zip : Tree a -> Zipper a
 zip tree =
     ( tree, [] )
+
+
+unzip : Zipper a -> Tree a
+unzip =
+    goToRoot >> subtree
 
 
 subtree : Zipper a -> Tree a
