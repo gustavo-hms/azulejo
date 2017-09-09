@@ -95,6 +95,27 @@ suite =
                     down
                         |> andThen goUp
                         |> thenCompare 121 "Couldn't reach upper level"
+            , test "applied twice should go to the node 12" <|
+                \_ ->
+                    down
+                        |> andThen goUp
+                        |> andThen goUp
+                        |> thenCompare 12 "Couldn't reach upper level"
+            , test "applied three times should go to the node 1" <|
+                \_ ->
+                    down
+                        |> andThen goUp
+                        |> andThen goUp
+                        |> andThen goUp
+                        |> thenCompare 1 "Couldn't reach upper level"
+            , test "applied four times should find Nothing" <|
+                \_ ->
+                    down
+                        |> andThen goUp
+                        |> andThen goUp
+                        |> andThen goUp
+                        |> andThen goUp
+                        |> Expect.equal Nothing
             ]
 
         -- [ fuzzGraph "Fuzz navigation" (zip <| Leaf 1) <|
