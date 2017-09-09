@@ -8,7 +8,7 @@ module Tree
         , goToRightChild
         , goToRoot
         , goUp
-        , unzip
+        , subtree
         , zip
         )
 
@@ -49,8 +49,8 @@ zip tree =
     ( tree, [] )
 
 
-unzip : Zipper a -> Tree a
-unzip ( tree, _ ) =
+subtree : Zipper a -> Tree a
+subtree ( tree, _ ) =
     tree
 
 

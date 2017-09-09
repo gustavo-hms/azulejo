@@ -45,7 +45,7 @@ thenEnsure expecting onFail m =
 
 thenCompare : a -> String -> Maybe (Zipper a) -> Expectation
 thenCompare value onFail =
-    thenEnsure (Tree.unzip >> firstElement >> Expect.equal value) onFail
+    thenEnsure (subtree >> firstElement >> Expect.equal value) onFail
 
 
 suite : Test
@@ -129,7 +129,7 @@ suite =
         , let
             thenTest =
                 thenEnsure
-                    (goToRoot >> unzip >> firstElement >> Expect.equal 1)
+                    (goToRoot >> subtree >> firstElement >> Expect.equal 1)
                     "Couldn't reach root"
           in
           describe "Tree.goToRoot"
@@ -152,7 +152,7 @@ suite =
                 \_ ->
                     zipper
                         |> goToRoot
-                        |> unzip
+                        |> subtree
                         |> firstElement
                         |> Expect.equal 1
             ]
@@ -175,7 +175,7 @@ suite =
         --     empty
         --         |> insertNodeData 11
         --             (Modify <|
-        --                 unzip
+        --                 subtree
         --                     |> flip (<:) ( Leaf 111, Leaf 112 )
         --                     |> zip
         --             )
@@ -184,7 +184,7 @@ suite =
         --             (Expect <|
         --                 \zipper ->
         --                     zipper
-        --                         |> unzip
+        --                         |> subtree
         --                         |> firstElement
         --                         |> Expect.equal 111
         --             )
@@ -195,7 +195,7 @@ suite =
         --         --
         --         |> insertNodeData 21
         --             (Modify <|
-        --                 unzip
+        --                 subtree
         --                     |> flip (<:) ( Leaf 211, Leaf 212 )
         --                     |> zip
         --             )
@@ -204,7 +204,7 @@ suite =
         --             (Expect <|
         --                 \zipper ->
         --                     zipper
-        --                         |> unzip
+        --                         |> subtree
         --                         |> firstElement
         --                         |> Expect.equal 212
         --             )
@@ -214,6 +214,6 @@ suite =
         --         |> insertEdge ( 23, 24 )
         --         --
         --         |> insertNodeData 31 (Modify <| goToRoot)
-        --         |> insertNodeData 32 (Expect <| unzip |> Expect.equal 1)
+        --         |> insertNodeData 32 (Expect <| subtree |> Expect.equal 1)
         --         |> insertEdge ( 31, 32 )
         ]
