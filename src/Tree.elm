@@ -1,5 +1,18 @@
-module Tree exposing (..)
+module Tree
+    exposing
+        ( Tree(..)
+        , Zipper
+        , firstElement
+        , goTo
+        , goToLeftChild
+        , goToRightChild
+        , goToRoot
+        , goUp
+        , unzip
+        , zip
+        )
 
+import List exposing (isEmpty)
 import Maybe exposing (andThen)
 
 
@@ -19,6 +32,26 @@ type alias Breadcrumbs a =
 
 type alias Zipper a =
     ( Tree a, Breadcrumbs a )
+
+
+firstElement : Tree a -> a
+firstElement tree =
+    case tree of
+        Leaf a ->
+            a
+
+        Node a _ _ ->
+            a
+
+
+zip : Tree a -> Zipper a
+zip tree =
+    ( tree, [] )
+
+
+unzip : Zipper a -> Tree a
+unzip ( tree, _ ) =
+    tree
 
 
 goToLeftChild : Zipper a -> Maybe (Zipper a)
@@ -54,14 +87,13 @@ goUp ( tree, breadcrumbs ) =
             Just ( Node element tree leftTree, breadcrumbs )
 
 
-goToRoot : Zipper a -> Maybe (Zipper a)
+goToRoot : Zipper a -> Zipper a
 goToRoot (( _, breadcrumbs ) as zipper) =
-    case breadcrumbs of
-        [] ->
-            Just zipper
-
-        breadcrumb :: breadcrumbs ->
-            goUp zipper |> andThen goToRoot
+    if isEmpty breadcrumbs then
+        zipper
+    else
+        Maybe.map goToRoot (goUp zipper)
+            |> Maybe.withDefault zipper
 
 
 goTo : (a -> Bool) -> Zipper a -> Maybe (Zipper a)
@@ -69,14 +101,6 @@ goTo predicate zipper =
     let
         root =
             goToRoot zipper
-
-        rootElement tree =
-            case tree of
-                Leaf a ->
-                    a
-
-                Node a _ _ ->
-                    a
 
         orElse takeThis tryThat =
             case tryThat of
@@ -87,11 +111,11 @@ goTo predicate zipper =
                     takeThis
 
         find predicate (( tree, _ ) as zipper) =
-            if predicate <| rootElement tree then
+            if predicate <| firstElement tree then
                 Just zipper
             else
                 goToLeftChild zipper
                     |> andThen (find predicate)
                     |> orElse (goToRightChild zipper |> andThen (find predicate))
     in
-    root |> andThen (find predicate)
+    find predicate root
