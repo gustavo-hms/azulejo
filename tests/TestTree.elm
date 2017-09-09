@@ -29,14 +29,19 @@ tree =
            )
 
 
-thenCompare : a -> String -> Maybe (Zipper a) -> Expectation
-thenCompare value onFail m =
+thenEnsure : (a -> Expectation) -> String -> Maybe a -> Expectation
+thenEnsure expecting onFail m =
     case m of
         Nothing ->
             Expect.fail onFail
 
         Just y ->
-            Tree.unzip y |> firstElement |> Expect.equal value
+            expecting y
+
+
+thenCompare : a -> String -> Maybe (Zipper a) -> Expectation
+thenCompare value onFail =
+    thenEnsure (Tree.unzip >> firstElement >> Expect.equal value) onFail
 
 
 suite : Test
@@ -116,6 +121,36 @@ suite =
                         |> andThen goUp
                         |> andThen goUp
                         |> Expect.equal Nothing
+            ]
+        , let
+            thenTest =
+                thenEnsure
+                    (goToRoot >> unzip >> firstElement >> Expect.equal 1)
+                    "Couldn't reach root"
+          in
+          describe "Tree.goToRoot"
+            [ test "should go up one level properly" <|
+                \_ -> zip tree |> goToRightChild |> thenTest
+            , test "should go up two levels properly" <|
+                \_ ->
+                    zip tree
+                        |> goToRightChild
+                        |> andThen goToLeftChild
+                        |> thenTest
+            , test "should go up three levels properly" <|
+                \_ ->
+                    zip tree
+                        |> goToRightChild
+                        |> andThen goToLeftChild
+                        |> andThen goToLeftChild
+                        |> thenTest
+            , test "should stay on the root" <|
+                \_ ->
+                    zip tree
+                        |> goToRoot
+                        |> unzip
+                        |> firstElement
+                        |> Expect.equal 1
             ]
 
         -- [ fuzzGraph "Fuzz navigation" (zip <| Leaf 1) <|
