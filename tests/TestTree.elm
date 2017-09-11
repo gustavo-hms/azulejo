@@ -1,10 +1,5 @@
 module TestTree exposing (..)
 
---import Fuzz exposing (Fuzzer, int, list, string)
---import Graph exposing (empty, insertEdge, insertNodeData)
---import List exposing (unzip)
---import Test.Graph exposing (Action(Modify), fuzzGraph)
-
 import Expect exposing (Expectation)
 import Maybe exposing (andThen)
 import Test exposing (..)
@@ -169,50 +164,4 @@ suite =
                     goTo ((==) 17) zipper
                         |> Expect.equal Nothing
             ]
-
-        -- [ fuzzGraph "Fuzz navigation" (zip <| Leaf 1) <|
-        --     empty
-        --         |> insertNodeData 11
-        --             (Modify <|
-        --                 subtree
-        --                     |> flip (<:) ( Leaf 111, Leaf 112 )
-        --                     |> zip
-        --             )
-        --         |> insertNodeData 12 (Modify <| goToLeftChild)
-        --         |> insertNodeData 13
-        --             (Expect <|
-        --                 \zipper ->
-        --                     zipper
-        --                         |> subtree
-        --                         |> firstElement
-        --                         |> Expect.equal 111
-        --             )
-        --         |> insertNodeData 14 (Modify <| goToRightChild)
-        --         |> insertEdge ( 11, 12 )
-        --         |> insertEdge ( 12, 13 )
-        --         |> insertEdge ( 13, 14 )
-        --         --
-        --         |> insertNodeData 21
-        --             (Modify <|
-        --                 subtree
-        --                     |> flip (<:) ( Leaf 211, Leaf 212 )
-        --                     |> zip
-        --             )
-        --         |> insertNodeData 22 (Modify <| goToRightChild)
-        --         |> insertNodeData 23
-        --             (Expect <|
-        --                 \zipper ->
-        --                     zipper
-        --                         |> subtree
-        --                         |> firstElement
-        --                         |> Expect.equal 212
-        --             )
-        --         |> insertNodeData 24 (Modify <| goToLeftChild)
-        --         |> insertEdge ( 21, 22 )
-        --         |> insertEdge ( 22, 23 )
-        --         |> insertEdge ( 23, 24 )
-        --         --
-        --         |> insertNodeData 31 (Modify <| goToRoot)
-        --         |> insertNodeData 32 (Expect <| subtree |> Expect.equal 1)
-        --         |> insertEdge ( 31, 32 )
         ]
