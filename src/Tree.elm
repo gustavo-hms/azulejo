@@ -8,6 +8,7 @@ module Tree
         , goToRightChild
         , goToRoot
         , goUp
+        , modifySubtree
         , subtree
         , unzip
         , zip
