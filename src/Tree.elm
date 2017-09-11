@@ -125,3 +125,8 @@ goTo predicate zipper =
                     |> orElse (goToRightChild zipper |> andThen (find predicate))
     in
     find predicate root
+
+
+modifySubtree : (Tree a -> Tree a) -> Zipper a -> Zipper a
+modifySubtree f ( tree, breadcrumbs ) =
+    ( f tree, breadcrumbs )
